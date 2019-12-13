@@ -7,6 +7,7 @@ axios
 .get("https://api.github.com/users/april5622") 
   .then((res) => {
     const gitInfo = (res.data);
+    cards.appendChild(userInfo(res));
     console.log(gitInfo);
   })
   .catch((err) => {
@@ -41,15 +42,30 @@ const followersArray = [
  "tlewandowski18",
  "CJStryker",
  "candaceyw",
- "sophiasagan",
- "ShawnBatson",
- "dvwhite",
- "Cvberumen51",
- "fuston05",
- "JC8747",
- "DaniWinston25",
- "abrobins"
 ];
+
+function followersProfile(profileURL) {
+  const followersPromise = axios.get(`https://api.github.com/users/${profileURL}/followers`)
+  followersPromise  
+    .then(res => {
+      const followers = res.data
+      followers.forEach(profile => {
+        const profilePromise = axios.get(profile.url)
+        profilePromise
+          .then(res => {
+            cards.appendChild(userInfo(res.data))
+          })
+          .catch(err => {
+            console.log('You hit an error', err)
+          })
+      })
+    })
+
+    .catch(err => {
+      console.log('You hit an error', err)
+    })
+}
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -72,7 +88,7 @@ const followersArray = [
 */
 
 const cards = document.querySelector('.cards');
-cards.appendChild(userInfo());
+
 
 function userInfo(obj){
   const cardDiv = document.createElement('div');
@@ -87,19 +103,21 @@ function userInfo(obj){
   const followingCount = document.createElement('p');
   const userBio = document.createElement('p');
 
+  //console.log(obj)
+
   cardDiv.classList.add('card');
   cardInfo.classList.add('card-info');
   h3Name.classList.add('name');
   userName.classList.add('username');
 
- /*  userImg.src = obj.avatar_url;
-  h3Name.textContent = obj.name;
-  userName.textContent = obj.login; */
-  userLocation.textContent = `Location: `; //obj.location
-  profile.textContent = `Profile: `; //obj.html_url
-  followerCount.textContent = `Followers: `; //obj.followers_url
-  followingCount.textContent = `Following: `; //obj.following_url
-  userBio.textContent = `Bio: `; //obj.bio
+  userImg.src = obj.data.avatar_url;
+  h3Name.textContent = obj.data.name;
+  userName.textContent = obj.data.login;
+  userLocation.textContent = `Location: ` + obj.data.location; //obj.location
+  profile.textContent = `Profile: ` + obj.data.html_url; //obj.html_url
+  followerCount.textContent = `Followers: `+ obj.data.followers; //obj.followers_url
+  followingCount.textContent = `Following: ` + obj.data.following; //obj.following_url
+  userBio.textContent = `Bio: ` + obj.data.bio;//obj.bio
 
   cardDiv.appendChild(userImg)
   cardDiv.appendChild(cardInfo);
@@ -116,8 +134,7 @@ function userInfo(obj){
 
   return cardDiv;
 
-}
-
+};
 
 
 /* List of LS Instructors Github username's: 
