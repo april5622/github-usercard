@@ -11,8 +11,9 @@ axios
     console.log(gitInfo);
   })
   .catch((err) => {
-    console.log(`You hit an error`, err);
-  });
+    console.log('You hit an error: ', err);
+  })
+   
 
  
 /* Step 2: Inspect and study the data coming back, this is YOUR 
@@ -36,35 +37,19 @@ axios
           user, and adding that card to the DOM.
 */
 
-const followersArray = [
- "HeyMichelle",
- "rachellsincere",
- "tlewandowski18",
- "CJStryker",
- "candaceyw",
-];
+const followersArray = ['HeyMichelle','rachellsincere','tlewandowski18','CJStryker','candaceyw'];
 
-function followersProfile(profileURL) {
-  const followersPromise = axios.get(`https://api.github.com/users/${profileURL}/followers`)
-  followersPromise  
-    .then(res => {
-      const followers = res.data
-      followers.forEach(profile => {
-        const profilePromise = axios.get(profile.url)
-        profilePromise
-          .then(res => {
-            cards.appendChild(userInfo(res.data))
-          })
-          .catch(err => {
-            console.log('You hit an error', err)
-          })
-      })
-    })
-
-    .catch(err => {
-      console.log('You hit an error', err)
-    })
-}
+followersArray.forEach((user) => {
+  axios.get(`https://api.github.com/users/${user}`)
+  .then((res) => {
+    const data = res.data;
+    const newCard = userInfo(res);
+    cards.appendChild(newCard);
+  })
+  .catch((err) => {
+    console.log('You hit an error: ',err)
+  });
+});
 
 
 /* Step 3: Create a function that accepts a single object as its only argument,
@@ -113,11 +98,11 @@ function userInfo(obj){
   userImg.src = obj.data.avatar_url;
   h3Name.textContent = obj.data.name;
   userName.textContent = obj.data.login;
-  userLocation.textContent = `Location: ` + obj.data.location; //obj.location
-  profile.textContent = `Profile: ` + obj.data.html_url; //obj.html_url
-  followerCount.textContent = `Followers: `+ obj.data.followers; //obj.followers_url
-  followingCount.textContent = `Following: ` + obj.data.following; //obj.following_url
-  userBio.textContent = `Bio: ` + obj.data.bio;//obj.bio
+  userLocation.textContent = `Location: ` + obj.data.location;
+  profile.textContent = `Profile: ` + obj.data.html_url; 
+  followerCount.textContent = `Followers: `+ obj.data.followers; 
+  followingCount.textContent = `Following: ` + obj.data.following; 
+  userBio.textContent = `Bio: ` + obj.data.bio;
 
   cardDiv.appendChild(userImg)
   cardDiv.appendChild(cardInfo);
